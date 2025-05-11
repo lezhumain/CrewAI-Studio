@@ -112,7 +112,7 @@ class MySerperDevTool(MyTool):
     def create_tool(self) -> SerperDevTool:
         os.environ['SERPER_API_KEY'] = self.parameters.get('SERPER_API_KEY')
         return SerperDevTool()
-    
+
 class MyYoutubeChannelSearchTool(MyTool):
     def __init__(self, tool_id=None, youtube_channel_handle=None):
         parameters = {
@@ -132,7 +132,7 @@ class MyWebsiteSearchTool(MyTool):
 
     def create_tool(self) -> WebsiteSearchTool:
         return WebsiteSearchTool(self.parameters.get('website') if self.parameters.get('website') else None)
-   
+
 class MyCSVSearchTool(MyTool):
     def __init__(self, tool_id=None, csv=None):
         parameters = {
@@ -199,7 +199,7 @@ class MyMDXSearchTool(MyTool):
 
     def create_tool(self) -> MDXSearchTool:
         return MDXSearchTool(mdx=self.parameters.get('mdx') if self.parameters.get('mdx') else None)
-    
+
 class MyPDFSearchTool(MyTool):
     def __init__(self, tool_id=None, pdf=None):
         parameters = {
@@ -282,7 +282,7 @@ class MyScrapeElementFromWebsiteTool(MyTool):
             css_element=self.parameters.get('css_element').split(",") if self.parameters.get('css_element') else None,
             cookie=cookie_arrayofdicts
         )
-    
+
 class MyYahooFinanceNewsTool(MyTool):
     def __init__(self, tool_id=None):
         parameters = {}
@@ -290,7 +290,7 @@ class MyYahooFinanceNewsTool(MyTool):
 
     def create_tool(self) -> YahooFinanceNewsTool:
         return YahooFinanceNewsTool()
-    
+
 class MyCustomApiTool(MyTool):
     def __init__(self, tool_id=None, base_url=None, headers=None, query_params=None):
         parameters = {
@@ -329,7 +329,7 @@ class MyCodeInterpreterTool(MyTool):
 
     def create_tool(self) -> CodeInterpreterTool:
         return CodeInterpreterTool()
-    
+
 
 class MyCustomCodeInterpreterTool(MyTool):
     def __init__(self, tool_id=None,workspace_dir=None):
@@ -350,7 +350,7 @@ class MyCSVSearchToolEnhanced(MyTool):
 
     def create_tool(self) -> CSVSearchToolEnhanced:
         return CSVSearchToolEnhanced(csv=self.parameters.get('csv') if self.parameters.get('csv') else None)
-    
+
 class MyScrapeWebsiteToolEnhanced(MyTool):
     def __init__(self, tool_id=None, website_url=None, cookies=None, show_urls=None, css_selector=None):
         parameters = {
@@ -375,7 +375,7 @@ TOOL_CLASSES = {
     'WebsiteSearchTool': MyWebsiteSearchTool,
     'ScrapeWebsiteTool': MyScrapeWebsiteTool,
     'ScrapeWebsiteToolEnhanced': MyScrapeWebsiteToolEnhanced,
-    
+
     'SeleniumScrapingTool': MySeleniumScrapingTool,
     'ScrapeElementFromWebsiteTool': MyScrapeElementFromWebsiteTool,
     'CustomApiTool': MyCustomApiTool,

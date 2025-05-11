@@ -257,7 +257,7 @@ def export_to_json(file_path):
         # Use SQLAlchemy's text() for raw SQL
         query = text('SELECT * FROM entities')
         result = conn.execute(query)
-        
+
         # Convert to list of dictionaries
         rows = [
             {
@@ -286,7 +286,7 @@ def import_from_json(file_path):
                     SET entity_type = EXCLUDED.entity_type,
                         data = EXCLUDED.data
             ''')
-            
+
             conn.execute(
                 upsert_sql,
                 {
@@ -295,9 +295,9 @@ def import_from_json(file_path):
                     "data": json.dumps(entity['data'])
                 }
             )
-            
+
         conn.commit()
-        
+
 def save_result(result):
     """Save a result to the database."""
     data = {
