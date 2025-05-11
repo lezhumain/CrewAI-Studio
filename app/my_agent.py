@@ -36,12 +36,12 @@ class MyAgent:
     def get_crewai_agent(self) -> Agent:
         llm = create_llm(self.llm_provider_model, temperature=self.temperature)
         tools = [tool.create_tool() for tool in self.tools]
-        
+
         # Add knowledge sources if they exist
         knowledge_sources = []
         if 'knowledge_sources' in ss and self.knowledge_source_ids:
             valid_knowledge_source_ids = []
-            
+
             for ks_id in self.knowledge_source_ids:
                 ks = next((k for k in ss.knowledge_sources if k.id == ks_id), None)
                 if ks:
@@ -115,19 +115,19 @@ class MyAgent:
                     if 'knowledge_sources' in ss and len(ss.knowledge_sources) > 0:
                         knowledge_source_options = [ks.id for ks in ss.knowledge_sources]
                         knowledge_source_labels = {ks.id: ks.name for ks in ss.knowledge_sources}
-                        
+
                         # Filter out any knowledge source IDs that no longer exist
                         valid_knowledge_sources = [ks_id for ks_id in self.knowledge_source_ids 
                                                 if ks_id in knowledge_source_options]
-                        
+
                         # If we filtered out any IDs, update the agent's knowledge sources
                         if len(valid_knowledge_sources) != len(self.knowledge_source_ids):
                             self.knowledge_source_ids = valid_knowledge_sources
                             save_agent(self)
-                        
+
                         # Generate a unique key for the knowledge sources multiselect
                         ks_key = f"knowledge_sources_{self.id}_{key}" if key else f"knowledge_sources_{self.id}"
-                        
+
                         # Now use the filtered list for the multiselect with the unique key
                         selected_knowledge_sources = st.multiselect(
                             "Knowledge Sources",

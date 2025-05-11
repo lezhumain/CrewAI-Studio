@@ -40,12 +40,12 @@ def draw_sidebar():
 
         if 'page' not in ss:
             ss.page = 'Crews'
-        
+
         selected_page = st.radio('Page', list(pages().keys()), index=list(pages().keys()).index(ss.page),label_visibility="collapsed")
         if selected_page != ss.page:
             ss.page = selected_page
             st.rerun()
-            
+
 def main():
     st.set_page_config(page_title="CrewAI Studio", page_icon="img/favicon.ico", layout="wide")
     load_dotenv()
@@ -57,12 +57,12 @@ def main():
         except ModuleNotFoundError as e:
             ss.agentops_failed = True
             print(f"Error initializing AgentOps: {str(e)}")            
-        
+
     db_utils.initialize_db()
     load_data()
     draw_sidebar()
     PageCrewRun.maintain_session_state() #this will persist the session state for the crew run page so crew run can be run in a separate thread
     pages()[ss.page].draw()
-    
+
 if __name__ == '__main__':
     main()
