@@ -1,5 +1,5 @@
-from crewai import Agent
 import streamlit as st
+from crewai import Agent
 from utils import rnd_id, fix_columns_width
 from streamlit import session_state as ss
 from db_utils import save_agent, delete_agent
