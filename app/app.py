@@ -1,6 +1,7 @@
 import streamlit as st
-from streamlit import session_state as ss
 import db_utils
+import os
+from streamlit import session_state as ss
 from pg_agents import PageAgents
 from pg_tasks import PageTasks
 from pg_crews import PageCrews
@@ -11,7 +12,6 @@ from pg_results import PageResults
 from pg_knowledge import PageKnowledge
 from dotenv import load_dotenv
 from llms import load_secrets_fron_env
-import os
 
 def pages():
     return {
@@ -41,7 +41,8 @@ def draw_sidebar():
         if 'page' not in ss:
             ss.page = 'Crews'
 
-        selected_page = st.radio('Page', list(pages().keys()), index=list(pages().keys()).index(ss.page),label_visibility="collapsed")
+        selected_page = st.radio('Page', list(pages().keys()),
+                                 index=list(pages().keys()).index(ss.page),label_visibility="collapsed")
         if selected_page != ss.page:
             ss.page = selected_page
             st.rerun()
@@ -61,7 +62,8 @@ def main():
     db_utils.initialize_db()
     load_data()
     draw_sidebar()
-    PageCrewRun.maintain_session_state() #this will persist the session state for the crew run page so crew run can be run in a separate thread
+    # this will persist the session state for the crew run page so crew run can be run in a separate thread
+    PageCrewRun.maintain_session_state()
     pages()[ss.page].draw()
 
 if __name__ == '__main__':
