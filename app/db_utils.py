@@ -41,8 +41,6 @@ def initialize_db():
     Initialize the database by creating tables if they do not exist.
     """
     create_tables()
-
-
 def save_entity(entity_type, entity_id, data):
     # For SQLite ≥ 3.24 and for Postgres, we can do:
     #   INSERT ... ON CONFLICT(id) DO UPDATE ...
@@ -58,7 +56,7 @@ def save_entity(entity_type, entity_id, data):
         conn.execute(
             upsert_sql,
             {
-                "id": entity_id,
+                'id': entity_id,
                 "etype": entity_type,
                 "data": json.dumps(data),
             }
