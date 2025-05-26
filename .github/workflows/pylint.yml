@@ -29,6 +29,7 @@ jobs:
           files=$(git diff --name-only --cached | grep '\.py$')
         fi
         
+        echo "files: $files"
         if [ -n "$files" ]; then
           pylint $files
         else
