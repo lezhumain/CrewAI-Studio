@@ -20,16 +20,12 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        # Check if there are any previous commits
-        if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
-          # Get the list of modified or added Python files
-          files=$(git diff --name-only HEAD^ HEAD | grep '\.py$')
-        else
-          # If no previous commit, check the current commit
-          files=$(git diff --name-only --cached | grep '\.py$')
-        fi
+        # Fetch the latest changes from the remote repository
+        git fetch origin master
         
-        echo "files: $files"
+        # Get the list of modified or added Python files compared to the master branch
+        files=$(git diff --name-only origin/master... | grep '\.py$')
+        
         if [ -n "$files" ]; then
           pylint $files
         else
