@@ -25,7 +25,7 @@ class CustomApiTool(BaseTool):
         self.default_headers = headers or {}
         self.default_query_params = query_params or {}
         self._generate_description()
-        
+
 
     def _run(self, endpoint: str, method: str, headers: Optional[Dict[str, str]] = None, query_params: Optional[Dict[str, Any]] = None, body: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         url = f"{self.base_url}/{endpoint}".rstrip("/")
@@ -58,6 +58,6 @@ class CustomApiTool(BaseTool):
             headers=input_data.headers,
             query_params=input_data.query_params,
             body=input_data.body
-            
+
         )
         return response_data
