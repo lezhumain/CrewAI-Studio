@@ -1,6 +1,6 @@
 name: Pylint
 
-on: [push]
+on: [pull_request]
 
 jobs:
   build:
@@ -37,7 +37,7 @@ jobs:
         git branch
 
         # Get the list of modified or added Python files compared to the master branch
-        files=$(git diff --name-only origin/main... | grep '\.py$')
+        files=$(git diff --name-only origin/main | grep '\.py$')
 
         echo "files:"
         echo "$files"
