@@ -21,10 +21,12 @@ jobs:
         REF="$GITHUB_BASE_REF"
         echo "base: $REF"
         echo "DYNAMIC_VAR=dynamic value ok" >> $GITHUB_ENV
+        echo "BASE_REF=$REF ok" >> $GITHUB_ENV
 
     - name: Access stuff
       run: |
         echo "$DYNAMIC_VAR"
+        echo "$BASE_REF"
 
     - name: Install dependencies
       run: |
