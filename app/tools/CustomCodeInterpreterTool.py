@@ -88,7 +88,7 @@ class CustomCodeInterpreterTool(BaseTool):
                 if install_result.exit_code != 0:
                     print(f"Something went wrong while installing the library: {library}")
                     print(install_result.output.decode("utf-8"))
-            
+
 
     def _get_existing_container(self, container_name: str) -> Optional[docker.models.containers.Container]:
         client = docker.from_env()
@@ -119,15 +119,15 @@ class CustomCodeInterpreterTool(BaseTool):
         self._verify_docker_image()
         container = self._init_docker_container()
         self._install_libraries(container, libraries_used)
-        
+
         # Encode the code to base64
         encoded_code = base64.b64encode(code.encode('utf-8')).decode('utf-8')
-        
+
         # Create a command to decode the base64 string and run the Python code
         cmd_to_run = f'python3 -c "import base64; exec(base64.b64decode(\'{encoded_code}\').decode(\'utf-8\'))"'
-        
+
         print(f"Running code in container: \n{code}")
-        
+
         exec_result = container.exec_run(cmd_to_run)
 
         if exec_result.exit_code != 0:
@@ -135,7 +135,7 @@ class CustomCodeInterpreterTool(BaseTool):
             return f"Something went wrong while running the code: \n{exec_result.output.decode('utf-8')}"
         print(f"Code run output: \n{exec_result.output.decode('utf-8')}")
         return exec_result.output.decode("utf-8")
-    
+
     def _run_script(self, run_script: str,libraries_used: str) -> str:
         with open(f"{self.workspace_dir}/{run_script}", "r") as file:
             code = file.read()

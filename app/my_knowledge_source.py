@@ -67,7 +67,7 @@ class MyKnowledgeSource:
             actual_path = self.find_file(self.source_path)
             if not actual_path:
                 raise FileNotFoundError(f"File not found: {self.source_path}")
-                
+
             # Import the appropriate class based on source type
             if self.source_type == "text_file":
                 from crewai.knowledge.source.text_file_knowledge_source import TextFileKnowledgeSource
@@ -118,12 +118,12 @@ class MyKnowledgeSource:
             if show_warning:
                 st.warning(f"Knowledge source {self.name} has no content")
             return False
-        
+
         if self.source_type != "string" and self.source_type != "docling" and not self.source_path:
             if show_warning:
                 st.warning(f"Knowledge source {self.name} has no source path")
             return False
-            
+
         # For file-based sources, check if the file exists (except for docling URLs)
         if self.source_type != "string" and self.source_type != "docling":
             actual_path = self.find_file(self.source_path)
@@ -132,7 +132,7 @@ class MyKnowledgeSource:
                     st.warning(f"File not found: {self.source_path}")
                 return False
 
-            
+
         return True
 
     def delete(self):
@@ -149,19 +149,19 @@ class MyKnowledgeSource:
             "json": "JSON File",
             "docling": "DocLing (URL or file)"
         }
-        
+
         # Create an ID for the upload field that includes both the knowledge source ID and type
         # This ensures the field is recreated when the type changes
         upload_field_id = f"uploader_{self.id}_{self.source_type}"
-        
+
         if self.edit:
             # Use a container instead of an expander for the main form
             with st.container():
                 st.subheader(f"Knowledge Source: {self.name}")
-                
+
                 # Name and type are outside the form to trigger immediate updates
                 self.name = st.text_input("Name", value=self.name, key=f"name_{self.id}")
-                
+
                 prev_type = self.source_type
                 self.source_type = st.selectbox(
                     "Source Type", 
@@ -170,12 +170,12 @@ class MyKnowledgeSource:
                     index=list(source_types.keys()).index(self.source_type),
                     key=f"type_{self.id}"
                 )
-                
+
                 # If type changed, save immediately to trigger rerender
                 if prev_type != self.source_type:
                     db_utils.save_knowledge_source(self)
                     st.rerun()
-                
+
                 # Create the form for the rest of the fields
                 with st.form(key=f'form_{self.id}' if key is None else key):
                     if self.source_type == "string":
@@ -186,7 +186,7 @@ class MyKnowledgeSource:
                             value=self.source_path,
                             help="Enter file path relative to the 'knowledge' directory or a URL for docling"
                         )
-                        
+
                         # File uploader for local files
                         if self.source_type != "docling":
                             # Define file types for the uploader based on source type
@@ -197,7 +197,7 @@ class MyKnowledgeSource:
                                 "excel": ["xlsx", "xls"], 
                                 "json": "json"
                             }
-                            
+
                             file_type = upload_types.get(self.source_type)
                             if file_type:
                                 uploaded_file = st.file_uploader(
@@ -205,24 +205,24 @@ class MyKnowledgeSource:
                                     type=file_type,
                                     key=upload_field_id
                                 )
-                                
+
                                 if uploaded_file is not None:
                                     # Create knowledge directory if it doesn't exist
                                     os.makedirs("knowledge", exist_ok=True)
-                                    
+
                                     # Save the uploaded file to the knowledge directory
                                     file_name = uploaded_file.name                                   
                                     file_path = os.path.join("knowledge", file_name)
-                                    
+
                                     with open(file_path, "wb") as f:
                                         f.write(uploaded_file.getbuffer())
-                                    
+
                                     # Set the source path to just the filename with knowledge prefix
                                     self.source_path = file_name
-                    
+
                     # Advanced settings
                     st.subheader("Advanced Settings")
-                    
+
                     # Chunk configuration
                     col1, col2 = st.columns(2)
                     with col1:
@@ -241,7 +241,7 @@ class MyKnowledgeSource:
                             max_value=1000,
                             help="Overlap between chunks (default: 200)"
                         )
-                    
+
                     # Metadata section
                     st.subheader("Metadata (optional)")
                     col1, col2 = st.columns([3, 1])
@@ -253,7 +253,7 @@ class MyKnowledgeSource:
                         if add_metadata and metadata_key:
                             self.metadata[metadata_key] = metadata_value
                             st.rerun()
-                    
+
                     # Display current metadata
                     if self.metadata:
                         st.write("Current Metadata:")
@@ -268,7 +268,7 @@ class MyKnowledgeSource:
                                 if remove_key:
                                     self.metadata.pop(key)
                                     st.rerun()
-                    
+
                     # Save button for the entire form
                     submitted = st.form_submit_button("Save Knowledge Source")
                     if submitted:
@@ -280,27 +280,27 @@ class MyKnowledgeSource:
             with st.expander(source_name, expanded=False):
                 st.markdown(f"**Name:** {self.name}")
                 st.markdown(f"**Type:** {source_types[self.source_type]}")
-                
+
                 if self.source_type == "string":
                     preview = self.content[:100] + "..." if len(self.content) > 100 else self.content
                     st.markdown(f"**Content Preview:** {preview}")
                 else:
                     st.markdown(f"**Source Path:** {self.source_path}")
-                
+
                 st.markdown(f"**Chunk Size:** {self.chunk_size}")
                 st.markdown(f"**Chunk Overlap:** {self.chunk_overlap}")
-                
+
                 if self.metadata:
                     st.markdown("**Metadata:**")
                     for key, value in self.metadata.items():
                         st.markdown(f"- {key}: {value}")
-                
+
                 col1, col2 = st.columns(2)
                 with col1:
                     st.button("Edit", on_click=self.set_editable, args=(True,), key=rnd_id())
                 with col2:
                     st.button("Delete", on_click=self.delete, key=rnd_id())
-                
+
                 self.is_valid(show_warning=True)
 
     def set_editable(self, edit):

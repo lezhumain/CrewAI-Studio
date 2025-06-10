@@ -33,7 +33,7 @@ class MyTask:
             context.extend(context_from_async_tasks)
         if context_from_sync_tasks:
             context.extend(context_from_sync_tasks)
-        
+
         if context:
             return Task(description=self.description, expected_output=self.expected_output, async_execution=self.async_execution, agent=self.agent.get_crewai_agent(), context=context)
         else:
