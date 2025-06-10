@@ -34,7 +34,7 @@ jobs:
       run: |
         # Fetch the latest changes from the remote repository
         # git fetch origin main
-        git branches
+        git branch
 
         # Get the list of modified or added Python files compared to the master branch
         files=$(git diff --name-only origin/main... | grep '\.py$')
