@@ -3,6 +3,7 @@ import string
 from streamlit import markdown
 import markdown as md
 from datetime import datetime
+import re
 
 def rnd_id(length=8):
     characters = string.ascii_letters + string.digits
@@ -24,6 +25,7 @@ def fix_columns_width():
                 }
             </style>
             """, unsafe_allow_html=True)
+
 
 def generate_printable_view(crew_name, result, inputs, formatted_result, created_at=None):
     """

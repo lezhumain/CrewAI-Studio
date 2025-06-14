@@ -1,5 +1,6 @@
 import re
 import streamlit as st
+from crewai import TaskOutput
 from streamlit import session_state as ss
 import threading
 import ctypes
@@ -10,6 +11,13 @@ import os
 from console_capture import ConsoleCapture
 from db_utils import load_results, save_result
 from utils import format_result, generate_printable_view, rnd_id
+
+
+def getTasksOutputsStr(tasks_output: list[TaskOutput]):
+    strRes = ""
+    for task_output in tasks_output:
+        strRes += f"\n\n#  TASK \n{task_output.raw}\n\n==========\n"
+    return strRes
 
 
 class PageCrewRun:
@@ -248,6 +256,10 @@ class PageCrewRun:
                 st.expander("Final output", expanded=True).write(formatted_result)
                 st.expander("Full output", expanded=False).write(ss.result)
 
+                tasks_result = getTasksOutputsStr(ss.result["result"].tasks_output)
+                formatted_tasks_result = format_result(tasks_result)
+                st.expander("Tasks resuls", expanded=False).write(formatted_tasks_result)
+
                 # Add print button
                 # FIXED: Also use the relevant placeholders for the printable view
                 relevant_inputs = {}
@@ -270,6 +282,22 @@ class PageCrewRun:
                     <script>
                         var printWindow = window.open('', '_blank');
                         printWindow.document.write({html_content!r});
+                        printWindow.document.close();
+                    </script>
+                    """
+                    st.components.v1.html(js, height=0)
+
+                html_tasks_content = generate_printable_view(
+                    ss.selected_crew_name,
+                    ss.result,
+                    relevant_inputs,
+                    formatted_tasks_result
+                )
+                if st.button("Open Printable Complete View"):
+                    js = f"""
+                    <script>
+                        var printWindow = window.open('', '_blank');
+                        printWindow.document.write({html_tasks_content!r});
                         printWindow.document.close();
                     </script>
                     """
