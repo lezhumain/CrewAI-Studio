@@ -18,7 +18,7 @@ class PageCrewRun:
         self.maintain_session_state()
         if 'results' not in ss:
             ss.results = load_results()
-    
+
     @staticmethod
     def maintain_session_state():
         defaults = {
@@ -43,15 +43,15 @@ class PageCrewRun:
     def get_placeholders_from_crew(self, crew):
         placeholders = set()
         attributes = ['description', 'expected_output', 'role', 'backstory', 'goal']
-        
+
         for task in crew.tasks:
             placeholders.update(self.extract_placeholders(task.description))
             placeholders.update(self.extract_placeholders(task.expected_output))
-        
+
         for agent in crew.agents:
             for attr in attributes[2:]:
                 placeholders.update(self.extract_placeholders(getattr(agent, attr)))
-        
+
         return placeholders
 
     def run_crew(self, crewai_crew, inputs, message_queue):
@@ -113,7 +113,7 @@ class PageCrewRun:
         if selected_crew:
             selected_crew.draw(expanded=False,buttons=False)
             self.draw_placeholders(selected_crew)
-            
+
             if not selected_crew.is_valid(show_warning=True):
                 st.error("Selected crew is not valid. Please fix the issues.")
             self.control_buttons(selected_crew)
@@ -122,7 +122,7 @@ class PageCrewRun:
         if st.button('Run crew!', disabled=not selected_crew.is_valid() or ss.running):
             inputs = {key.split('_')[1]: value for key, value in ss.placeholders.items()}
             ss.result = None
-            
+
             try:
                 crew = selected_crew.get_crewai_crew(full_output=True)
             except Exception as e:
@@ -186,7 +186,7 @@ class PageCrewRun:
             ss.page = "Kickoff!"
             st.rerun()
         console_container = st.empty()
-        
+
         with console_container.container():
             with st.expander("Console Output", expanded=False):
                 col1, col2 = st.columns([6,1])
@@ -202,19 +202,19 @@ class PageCrewRun:
             if isinstance(ss.result, dict):
                 # Save the result only if it's a new result (not already in ss.results)
                 from result import Result
-                
+
                 # Create a unique identifier for the current result based on its content
                 result_identifier = str(hash(str(ss.result)))
-                
+
                 # Check if this result has already been saved
                 if not hasattr(ss, 'saved_results'):
                     ss.saved_results = set()
-                
+
                 if result_identifier not in ss.saved_results:
                     # FIXED: Only get placeholders related to the current run
                     # Get only relevant placeholders for this specific crew
                     relevant_placeholders = {}
-                    
+
                     # First, extract all placeholders for the current crew
                     curr_crew = self.get_mycrew_by_name(ss.selected_crew_name)
                     if curr_crew:
@@ -224,7 +224,7 @@ class PageCrewRun:
                             placeholder_key = f'placeholder_{placeholder}'
                             if placeholder_key in ss.placeholders:
                                 relevant_placeholders[placeholder_key] = ss.placeholders[placeholder_key]
-                    
+
                     # Create a new Result instance with serialized result
                     result = Result(
                         id=f"R_{rnd_id()}",
@@ -233,13 +233,13 @@ class PageCrewRun:
                         inputs={key.split('_')[1]: value for key, value in relevant_placeholders.items()},
                         result=self.serialize_result(ss.result)  # Serialize the result before saving
                     )
-                    
+
                     # Save to database and update session state
                     save_result(result)
                     if 'results' not in ss:
                         ss.results = []
                     ss.results.append(result)
-                    
+
                     # Mark this result as saved
                     ss.saved_results.add(result_identifier)
 
@@ -258,7 +258,7 @@ class PageCrewRun:
                         placeholder_key = f'placeholder_{placeholder}'
                         if placeholder_key in ss.placeholders:
                             relevant_inputs[placeholder] = ss.placeholders[placeholder_key]
-                
+
                 html_content = generate_printable_view(
                     ss.selected_crew_name,
                     ss.result,

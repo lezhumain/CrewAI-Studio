@@ -79,7 +79,7 @@ class MyCrew:
         knowledge_sources = []
         if 'knowledge_sources' in ss and self.knowledge_source_ids:
             valid_knowledge_source_ids = []
-            
+
             for ks_id in self.knowledge_source_ids:
                 ks = next((k for k in ss.knowledge_sources if k.id == ks_id), None)
                 if ks:
@@ -88,7 +88,7 @@ class MyCrew:
                         valid_knowledge_source_ids.append(ks_id)
                     except Exception as e:
                         print(f"Error loading knowledge source {ks.id}: {str(e)}")
-            
+
             # If any knowledge sources were invalid, update the list
             if len(valid_knowledge_source_ids) != len(self.knowledge_source_ids):
                 self.knowledge_source_ids = valid_knowledge_source_ids
@@ -136,7 +136,7 @@ class MyCrew:
             *args, **kwargs
         )
         return cr
-    
+
     def update_knowledge_sources(self):
         self.knowledge_source_ids = ss[f'knowledge_sources_{self.id}']
         db_utils.save_crew(self)
@@ -186,7 +186,7 @@ class MyCrew:
     def update_memory(self):
         self.memory = ss[f'memory_{self.id}']
         db_utils.save_crew(self)
-    
+
     def update_max_rpm(self):
         self.max_rpm = ss[f'max_rpm_{self.id}']
         db_utils.save_crew(self)
@@ -236,7 +236,7 @@ class MyCrew:
         planning_key = f"planning_{self.id}"
         cache_key = f"cache_{self.id}"
         max_rpm_key = f"max_rpm_{self.id}"
-        
+
         if self.edit:
             with st.container(border=True):
                 st.text_input("Name (just id, it doesn't affect anything)", value=self.name, key=name_key, on_change=self.update_name)

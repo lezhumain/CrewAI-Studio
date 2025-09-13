@@ -102,7 +102,7 @@ class CSVSearchToolEnhanced(RagTool):
         if not "csv" in kwargs and not self.args_schema == FixedCSVSearchToolSchema:
             return "Please provide a CSV to search."
         return super()._run(**kwargs)
-    
 
-    
+
+
 

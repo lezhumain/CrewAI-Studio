@@ -27,7 +27,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
     cookies: Optional[dict] = None
     show_urls: Optional[bool] = False
     css_selector: Optional[str] = None
-        
+
     headers: Optional[dict] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -58,7 +58,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             )
             self.args_schema = FixedScrapeWebsiteToolEnhancedSchema
             self._generate_description()
-        
+
     def clean_text(self, text: str) -> str:
         """Clean and normalize text content."""
         if not text:
@@ -67,33 +67,33 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
         # Remove HTML tags while preserving line breaks
         text = text.replace('<br>', '\n').replace('<br/>', '\n').replace('<br />', '\n')
         text = text.replace('<hr/>', '').replace('<hr />', '').replace('<hr>', '')
-        
+
         # Remove all remaining HTML tags
         text = re.sub(r'<[^>]+>', '', text)
-        
+
         # Convert various whitespace to spaces
         text = re.sub(r'[\t\f\r\x0b]', ' ', text)
-        
+
         # Clean up spaces and empty lines
         text = re.sub(r' {2,}', ' ', text)
         text = text.strip()
         text = re.sub(r'^\s+', '', text, flags=re.MULTILINE)
-        
+
         # Remove wicket attributes and other technical artifacts
         text = re.sub(r'wicket:[^\s>]+', '', text)
         text = re.sub(r'\s*style="[^"]*"', '', text)
         text = re.sub(r'\s*class="[^"]*"', '', text)
         text = re.sub(r'<!--.*?-->', '', text, flags=re.DOTALL)
-        
+
         # Remove empty lines while preserving intentional line breaks
         text = re.sub(r'\n\s*\n', '\n\n', text)
-        
+
         return text.strip()
 
     def extract_text_with_structure(self, element: Tag, depth: int = 0) -> list:
         """Extract text while preserving structure."""
         results = []
-        
+
         # Skip script and style
         if element.name in ['script', 'style']:
             return results
@@ -175,7 +175,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             # Skip empty text nodes
             if isinstance(child, str) and not child.strip():
                 continue
-                
+
             child_results = self.extract_text_with_structure(child, depth)
             if not child_results:
                 continue
@@ -199,22 +199,22 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             f"URL: {url}",
             f"Scraping Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         ]
-        
+
         # Extract title
         title = soup.find('title')
         if title and title.string and title.string.strip():
             metadata.append(f"Title: {title.string.strip()}")
-            
+
         # Extract description
         meta_desc = soup.find('meta', {'name': 'description'}) or soup.find('meta', {'property': 'og:description'})
         if meta_desc and meta_desc.get('content') and meta_desc['content'].strip():
             metadata.append(f"Description: {meta_desc['content'].strip()}")
-            
+
         # Extract language
         html_tag = soup.find('html')
         if html_tag and html_tag.get('lang') and html_tag['lang'].strip():
             metadata.append(f"Language: {html_tag['lang']}")
-            
+
         metadata.append("---")
         return "\n".join(metadata)
 
@@ -229,7 +229,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             filename_match = re.search(r'filename\*?="?([^;"]+)"?', content_disposition)
             if filename_match:
                 filename = filename_match.group(1).strip()
-        
+
         if filename == "unknown":
             filename = url.split("/")[-1].split("?")[0] or "unknown"
 
@@ -240,7 +240,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             f"Scraping Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         ]
         return "\n".join(metadata)
-    
+
     def pdf_url_to_text(self, url: str) -> str:
         from pdfminer.high_level import extract_text
         from io import BytesIO
@@ -263,7 +263,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             return text
         except Exception as e:
             return f"Error processing PDF: {e}"
-        
+
     def _run(
         self,
         **kwargs: Any,
@@ -271,10 +271,10 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
         website_url = kwargs.get("website_url", self.website_url)
         if not website_url:
             return "Error: No website URL provided"
-            
+
         self.website_url = website_url
         css_selector = self.css_selector
-        
+
         try:
             response = requests.get(
                 website_url,
@@ -283,12 +283,12 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
                 cookies=self.cookies if self.cookies else {},
                 allow_redirects=True
             )
-            
+
             # Store original URL if redirected
             final_url = response.url
             was_redirected = len(response.history) > 0
             original_url = response.history[0].url if was_redirected else website_url
-            
+
             # Create initial metadata
             metadata = [
                 "### Page Metadata ###",
@@ -298,7 +298,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             ]
             if was_redirected:
                 metadata.append(f"Redirect: {original_url} -> {final_url}")
-            
+
             # Handle binary content
             content_type = response.headers.get("Content-Type", "").lower()
             if "pdf" in content_type:
@@ -347,7 +347,7 @@ class ScrapeWebsiteToolEnhanced(BaseTool):
             text = text.strip()
 
             return metadata + "\n" + text if text else metadata + "No meaningful content found on the page."
-            
+
         except requests.Timeout:
             return "Error: Website request timed out"
         except requests.RequestException as e:

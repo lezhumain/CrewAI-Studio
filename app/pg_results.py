@@ -51,7 +51,7 @@ class PageResults:
             # Format inputs for display in expander title
             input_summary = ""
             input_items = list(result.inputs.items())
-            
+
             # Handle different numbers of input fields
             if len(input_items) == 0:
                 input_summary = ""
@@ -63,19 +63,19 @@ class PageResults:
                 # For multiple inputs, show brief summaries
                 max_chars = max(40 // len(input_items), 10)  # Adjust based on number of inputs
                 input_parts = []
-                
+
                 for key, value in input_items:
                     if len(value) <= max_chars:
                         input_parts.append(f"{key}: {value}")
                     else:
                         input_parts.append(f"{key}: {value[:max_chars]}...")
-                
+
                 input_summary = " | " + " | ".join(input_parts)
-            
+
             # Create the expander with enhanced title
             timestamp = datetime.fromisoformat(result.created_at).strftime('%Y-%m-%d %H:%M:%S')
             expander_title = f"{result.crew_name} - {timestamp}{input_summary}"
-            
+
             with st.expander(expander_title, expanded=False):
                 st.markdown("#### Inputs")
                 for key, value in result.inputs.items():

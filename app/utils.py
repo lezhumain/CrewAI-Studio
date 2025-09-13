@@ -32,7 +32,7 @@ def generate_printable_view(crew_name, result, inputs, formatted_result, created
     if created_at is None:
         created_at = datetime.now().isoformat()
     created_at_str = datetime.fromisoformat(created_at).strftime('%Y-%m-%d %H:%M:%S')
-    
+
     fixed_md = normalize_list_indentation(formatted_result)
 
     # Convert Markdown -> HTML

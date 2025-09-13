@@ -87,7 +87,7 @@ Task(
             manager_llm_definition = f'manager_llm=create_llm({json_dumps_python(crew.manager_llm)})'
         elif crew.process == Process.hierarchical and crew.manager_agent:
             manager_llm_definition = f'manager_agent=next(agent for agent in agents if agent.role == {json_dumps_python(crew.manager_agent.role)})'
-        
+
         app_content = f"""
 import streamlit as st
 from crewai import Agent, Task, Crew, Process
@@ -143,7 +143,7 @@ def safe_pop_env_var(key):
         os.environ.pop(key)
     except KeyError:
         pass
-        
+
 LLM_CONFIG = {{
     "OpenAI": {{
         "create_llm": create_openai_llm
@@ -399,7 +399,7 @@ streamlit run app.py --server.headless true
                 crew_data['tools'].append(tool_data)
 
         return json.dumps(crew_data, indent=2)
-    
+
     def import_crew_from_json(self, crew_data):
         # Create tools
         for tool_data in crew_data['tools']:
@@ -488,7 +488,7 @@ streamlit run app.py --server.headless true
         uploaded_file = st.file_uploader("Import JSON file", type="json")
         if uploaded_file is not None:
             json_data = json.load(uploaded_file)
-            
+
             if isinstance(json_data, list):  # Full database export
                 with open("uploaded_file.json", "w") as f:
                     json.dump(json_data, f)
@@ -505,7 +505,7 @@ streamlit run app.py --server.headless true
         else:
             crew_names = [crew.name for crew in ss.crews]
             selected_crew_name = st.selectbox("Select crew to export", crew_names)
-            
+
             if st.button("Export singlepage app"):
                 zip_path = self.create_export(selected_crew_name)
                 with open(zip_path, "rb") as fp:

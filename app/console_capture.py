@@ -42,14 +42,14 @@ class ConsoleCapture:
             if self.active:
                 self.original_stdout.write(text)
                 self._line_buffer += text
-                
+
                 while '\n' in self._line_buffer:
                     line, self._line_buffer = self._line_buffer.split('\n', 1)
                     if line:
                         cleaned_line = self.clean_text(line)
                         if cleaned_line:
                             self.output_queue.put(cleaned_line)
-                
+
                 self.original_stdout.flush()
 
     def flush(self):
